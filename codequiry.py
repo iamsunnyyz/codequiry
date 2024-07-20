@@ -91,10 +91,11 @@ class Codequiry(object):
         mp_enc = MultipartEncoder(
             fields={
                 'check_id': str(check_id),
-                'file': open(file_path, 'rb')}
+                'file': (file_name, open(file_path, 'rb'))
+            }
         )
         headers = self.base_headers
-        headers['Content-Type'] = 'multipart/form-data'
+        headers['Content-Type'] = mp_enc.content_type
         response = requests.post(self.API_UPLOAD_URL, data=mp_enc, headers=headers).content
         return response
 
