@@ -20,7 +20,7 @@ Installation
 ------------
 .. code-block:: python
 
-    pip install -r requirements.txt to get started!
+    pip install -r requirements.txt
 
 Usage
 ------------
@@ -46,12 +46,12 @@ Getting checks
     print(checks)
 
 
-Creating checks (specify name and programming language)
+Creating checks (specify name and programming language id)
 -------------------------------------------------------
-Examples: java, c-cpp, python, csharp, txt
+Examples: javascript, java, c-cpp, python, csharp, txt
 .. code:: python
 
-    check = sdk.create_check("checkname", "java")
+    check = sdk.create_check("checkname", "39")
     print(check)
 
 Uploading to a check (specify check_id and file (must be a zip file))
