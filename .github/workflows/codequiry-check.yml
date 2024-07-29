@@ -1,0 +1,32 @@
+name: Codequiry Check
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.zip'  # Trigger on zip file changes
+      # - '**/*.py'   # Trigger on Python file changes
+
+jobs:
+  codequiry-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Codequiry Check
+        env:
+          CODEQUIRY_API_KEY: ${{ secrets.CODEQUIRY_API_KEY }}
+        run: |
+          python app.py

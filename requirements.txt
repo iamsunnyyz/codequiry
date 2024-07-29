@@ -1,4 +1,4 @@
 requests
 requests_toolbelt
 ConfigParser
-python-socketio
+python-socketi
