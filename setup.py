@@ -10,8 +10,6 @@ setup(
         'ConfigParser',
         'python-socketio'
     ],
-    author="Sunny Chauhan",
-    author_email="sunny170600@example.com",
     description="Python SDK for Codequiry API",
     long_description=open('README.rst').read(),
     long_description_content_type='text/x-rst',
