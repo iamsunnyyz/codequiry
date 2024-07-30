@@ -1,3 +1,4 @@
+import os
 import requests
 import time
 from codequiry import Codequiry
@@ -144,7 +145,7 @@ def wait_for_check_completion(api_key, check_id, interval=60, max_attempts=10):
     return None
 
 def main():
-    API_KEY = "79e85a511702092a479d9ba4a859e0cc80516d6b7effb10a6e813c21a026527e"
+    API_KEY = os.getenv("CODEQUIRY_API_KEY")
     
     # Get account information
     get_account_info(API_KEY)
