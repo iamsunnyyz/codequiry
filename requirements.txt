@@ -1,8 +1,4 @@
 requests
 requests_toolbelt
 ConfigParser
-<<<<<<< HEAD
 python-socketio
-=======
-python-socketi
->>>>>>> 951c2ae9d629ce98a4902f6bd7c3bf4eb23a4d63
