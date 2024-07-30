@@ -160,7 +160,7 @@ def main():
     check_id = check_response['id']
     
     # Upload a file to the check
-    file_path = 'quicksort.zip'  # Update this path to your zip file location
+    file_path = 'code-check.zip'  # Update this path to your zip file location
     upload_response = upload_file(API_KEY, check_id, file_path)
     
     # Start the check
