@@ -1,6 +1,7 @@
 import os
 import requests
 import time
+import json
 from codequiry import Codequiry
 
 def get_account_info(api_key):
@@ -144,6 +145,43 @@ def wait_for_check_completion(api_key, check_id, interval=60, max_attempts=10):
     print("Check did not complete within the expected time.")
     return None
 
+def parse_and_display_results(raw_response):
+    try:
+        response_json = json.loads(raw_response)
+        check = response_json.get('check', {})
+        submissions = response_json.get('submissions', [{}])[0]
+
+        check_id = check.get('id')
+        check_name = check.get('name')
+        created_at = check.get('created_at')
+        status_message = check.get('status_message')
+        lines_of_code = check.get('lines')
+        similar_files = check.get('similar_files')
+        matches_found = check.get('matches_found')
+
+        filename = submissions.get('filename')
+        probability_of_plagiarism = submissions.get('result2')  # Assuming this is the percentage
+        matches_local_db = submissions.get('matches_local')
+        matches_web = submissions.get('matches_web')
+
+        # Display the parsed results
+        print(f"Check ID: {check_id}")
+        print(f"Name: {check_name}")
+        print(f"Created At: {created_at}")
+        print(f"Status Message: {status_message}")
+        print(f"Lines of Code: {lines_of_code}")
+        print(f"Similar Files: {similar_files}")
+        print(f"Matches Found: {matches_found}")
+        print(f"Filename: {filename}")
+        print(f"Probability of Plagiarism: {probability_of_plagiarism}%")
+        print(f"Matches Local Database: {matches_local_db}")
+        print(f"Matches Web: {matches_web}")
+
+    except json.JSONDecodeError as e:
+        print(f"JSON Decode Error: {e}")
+    except Exception as e:
+        print(f"Error: {e}")
+
 def main():
     API_KEY = os.getenv("CODEQUIRY_API_KEY")
     
@@ -175,6 +213,9 @@ def main():
         submission_id = overview_response['submissions'][0]['id']
         detailed_results = get_detailed_submission_results(API_KEY, check_id, submission_id)
         print("Detailed Submission Results:", detailed_results)
+    
+    # Parse and display the results
+        parse_and_display_results(detailed_results)
     else:
         print("No results available.")
 
