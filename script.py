@@ -1,38 +1,146 @@
+import streamlit as st
+import os
 import time
+import zipfile
+from codequiry import Codequiry
 
-def print_lines():
-    lines = [
-        "Account Information: {'user': 'JHON FELIPE URREGO MEJIA', 'email': 'info@gtic.com.co', 'pro_checks_remaining': 2473, 'submissions': 0}",
-        "Check Creation Response: {'course_id': 52727, 'name': 'Test Check', 'status_id': 1, 'job_id': 0, 'language_id': 18, 'updated_at': '2024-07-30 18:58:34', 'created_at': '2024-07-30 18:58:34', 'id': 95777}",
-        'Raw Upload Response: {"data":[{"id":221004,"filename":"code-check","file_size":0,"status_id":2,"created_at":"2024-07-30 18:58:35","updated_at":"2024-07-30 18:58:35","result1":"0","result2":"0","result3":"0","total_result":"0","matches_local":0,"matches_web":0,"modify_updated_at":"Jul 30, 2024 6:58 PM UTC","assignmentstatuses":{"id":2,"status":"Ready","icon":"fas fa-step-forward","color":"primary","created_at":null,"updated_at":null}}],"file":"code-check.zip","submission_count":1,"check":{"id":95777,"course_id":52727,"name":"Test Check","created_at":"2024-07-30 18:58:34","updated_at":"2024-07-30 18:58:36","status_id":2,"job_id":0,"status_message":"","test_type":1,"language_id":18,"consumption":0,"consumption_per_line":"0.00000","prelim":1,"files":0,"lines":0,"sources_indexed":null,"billable_lines":null,"similar_files":0,"matches_found":0,"hard_comparisons":0}}',
-        "Upload Response JSON: {'data': [{'id': 221004, 'filename': 'code-check', 'file_size': 0, 'status_id': 2, 'created_at': '2024-07-30 18:58:35', 'updated_at': '2024-07-30 18:58:35', 'result1': '0', 'result2': '0', 'result3': '0', 'total_result': '0', 'matches_local': 0, 'matches_web': 0, 'modify_updated_at': 'Jul 30, 2024 6:58 PM UTC', 'assignmentstatuses': {'id': 2, 'status': 'Ready', 'icon': 'fas fa-step-forward', 'color': 'primary', 'created_at': None, 'updated_at': None}}], 'file': 'code-check.zip', 'submission_count': 1, 'check': {'id': 95777, 'course_id': 52727, 'name': 'Test Check', 'created_at': '2024-07-30 18:58:34', 'updated_at': '2024-07-30 18:58:36', 'status_id': 2, 'job_id': 0, 'status_message': '', 'test_type': 1, 'language_id': 18, 'consumption': 0, 'consumption_per_line': '0.00000', 'prelim': 1, 'files': 0, 'lines': 0, 'sources_indexed': None, 'billable_lines': None, 'similar_files': 0, 'matches_found': 0, 'hard_comparisons': 0}}}",
-        'Raw Start Check Response: {"check":{"id":95777,"course_id":52727,"name":"Test Check","created_at":"2024-07-30 18:58:34","updated_at":"2024-07-30 18:58:37","status_id":7,"job_id":0,"status_message":"Waiting for the server to pick up your check","test_type":1,"language_id":18,"consumption":0,"consumption_per_line":"0.00000","prelim":1,"files":0,"lines":0,"sources_indexed":null,"billable_lines":null,"similar_files":0,"matches_found":0,"hard_comparisons":0},"status":"In Queue","submission_count":1,"checkURL":"https:\\/\\/dashboard.codequiry.com\\/course\\/52727\\/assignment\\/95777"}',
-        "Start Check Response JSON: {'check': {'id': 95777, 'course_id': 52727, 'name': 'Test Check', 'created_at': '2024-07-30 18:58:34', 'updated_at': '2024-07-30 18:58:37', 'status_id': 7, 'job_id': 0, 'status_message': 'Waiting for the server to pick up your check', 'test_type': 1, 'language_id': 18, 'consumption': 0, 'consumption_per_line': '0.00000', 'prelim': 1, 'files': 0, 'lines': 0, 'sources_indexed': None, 'billable_lines': None, 'similar_files': 0, 'matches_found': 0, 'hard_comparisons': 0}, 'status': 'In Queue', 'submission_count': 1, 'checkURL': 'https://dashboard.codequiry.com/course/52727/assignment/95777'}",
-        'Raw Check Status Response: {"check":{"id":95777,"course_id":52727,"name":"Test Check","created_at":"2024-07-30 18:58:34","updated_at":"2024-07-30 18:58:37","status_id":6,"job_id":0,"status_message":"Waiting for the server to pick up your check","test_type":1,"language_id":18,"consumption":0,"consumption_per_line":"0.00000","prelim":1,"files":0,"lines":0,"sources_indexed":null,"billable_lines":null,"similar_files":0,"matches_found":0,"hard_comparisons":0},"status":"Processing","submission_count":1,"submissions":[{"id":221004,"filename":"code-check","file_size":0,"status_id":7,"created_at":"2024-07-30 18:58:35","updated_at":"2024-07-30 18:58:37","result1":"0","result2":"0","result3":"0","total_result":"0","matches_local":0,"matches_web":0,"assignmentstatuses":{"id":7,"status":"In Queue","icon":"fas fa-pause-circle","color":"info","created_at":null,"updated_at":null}}]}',
-        "Check Status Response JSON: {'check': {'id': 95777, 'course_id': 52727, 'name': 'Test Check', 'created_at': '2024-07-30 18:58:34', 'updated_at': '2024-07-30 18:58:37', 'status_id': 6, 'job_id': 0, 'status_message': 'Waiting for the server to pick up your check', 'test_type': 1, 'language_id': 18, 'consumption': 0, 'consumption_per_line': '0.00000', 'prelim': 1, 'files': 0, 'lines': 0, 'sources_indexed': None, 'billable_lines': None, 'similar_files': 0, 'matches_found': 0, 'hard_comparisons': 0}, 'status': 'Processing', 'submission_count': 1, 'submissions': [{'id': 221004, 'filename': 'code-check', 'file_size': 0, 'status_id': 7, 'created_at': '2024-07-30 18:58:35', 'updated_at': '2024-07-30 18:58:37', 'result1': '0', 'result2': '0', 'result3': '0', 'total_result': '0', 'matches_local': 0, 'matches_web': 0, 'assignmentstatuses': {'id': 7, 'status': 'In Queue', 'icon': 'fas fa-pause-circle', 'color': 'info', 'created_at': None, 'updated_at': None}}]}",
-        'Raw Check Status Response: {"check":{"id":95777,"course_id":52727,"name":"Test Check","created_at":"2024-07-30 18:58:34","updated_at":"2024-07-30 18:58:37","status_id":6,"job_id":0,"status_message":"Waiting for the server to pick up your check","test_type":1,"language_id":18,"consumption":0,"consumption_per_line":"0.00000","prelim":1,"files":0,"lines":0,"sources_indexed":null,"billable_lines":null,"similar_files":0,"matches_found":0,"hard_comparisons":0},"status":"Processing","submission_count":1,"submissions":[{"id":221004,"filename":"code-check","file_size":0,"status_id":7,"created_at":"2024-07-30 18:58:35","updated_at":"2024-07-30 18:58:37","result1":"0","result2":"0","result3":"0","total_result":"0","matches_local":0,"matches_web":0,"assignmentstatuses":{"id":7,"status":"In Queue","icon":"fas fa-pause-circle","color":"info","created_at":null,"updated_at":null}}]}'
-        "Check Completed"
-        '''
-        Status Message: You are now able to view results. Quota Consumed: 36
-        Check ID: 95777
-        Name: Test Check
-        Created At: 2024-07-30 18:58:34
-        Lines of Code: 48
-        Similar Files: 30999092
-        Matches Found: 3
-        Filename: code-check
-        Probability of Plagiarism: 80%
-        Uniqueness Percentage: 20%
-        Matches Local Database: 0
-        Matches Web: 3
-        '''
-    ]
-    
-    interval = 300 / len(lines)
-    
-    for line in lines:
-        print(line)
+# API functions
+def get_account_info(api_key):
+    codequiry = Codequiry(api_key)
+    account_info = codequiry.account()
+    return account_info
+
+# def get_check_history(api_key):
+#     codequiry = Codequiry(api_key)
+#     check_history = codequiry.checks()
+#     return check_history
+
+def create_check(api_key, check_name, lang_id):
+    codequiry = Codequiry(api_key)
+    response = codequiry.create_check(check_name, lang_id)
+    return response
+
+def compress_file_to_zip(file_path, zip_file_path):
+    with zipfile.ZipFile(zip_file_path, 'w') as zipf:
+        zipf.write(file_path, os.path.basename(file_path))
+
+def upload_file(api_key, check_id, file_path):
+    codequiry = Codequiry(api_key)
+    response = codequiry.upload_file(check_id, file_path)
+    return response
+
+def start_check(api_key, check_id, dbcheck=False, webcheck=False):
+    codequiry = Codequiry(api_key)
+    response = codequiry.start_check(check_id)
+    return response
+
+def get_check_status(api_key, check_id):
+    codequiry = Codequiry(api_key)
+    response = codequiry.get_check(check_id)
+    return response
+
+def get_check_overview(api_key, check_id):
+    codequiry = Codequiry(api_key)
+    response = codequiry.get_overview(check_id)
+    return response
+
+def get_detailed_submission_results(api_key, check_id, submission_id):
+    codequiry = Codequiry(api_key)
+    response = codequiry.get_results(check_id, submission_id)
+    return response
+
+def wait_for_check_completion(api_key, check_id, interval=60, max_attempts=5):
+    attempts = 0
+    while attempts < max_attempts:
+        status_response = get_check_status(api_key, check_id)
+        st.write(f"Check Status Response: {status_response}")
+        status = status_response.get('status')
+        
+        if status == "Completed":
+            return get_check_overview(api_key, check_id)
+        elif status in ["Pending", "Ready", "Errors", "In Queue"]:
+            pass
+        attempts += 1
         time.sleep(interval)
+    return None
+
+def parse_and_display_results(raw_response):
+    response_json = raw_response
+    check = response_json.get('check', {})
+    submissions = response_json.get('submissions', [{}])[0]
+
+    check_id = check.get('id')
+    check_name = check.get('name')
+    created_at = check.get('created_at')
+    status_message = check.get('status_message')
+    lines_of_code = check.get('lines')
+    similar_files = check.get('similar_files')
+    matches_found = check.get('matches_found')
+
+    filename = submissions.get('filename')
+    probability_of_plagiarism = submissions.get('result2')
+    uniqueness_percentage = 100 - probability_of_plagiarism
+    matches_local_db = submissions.get('matches_local')
+    matches_web = submissions.get('matches_web')
+
+    st.write(f"**Check ID:** {check_id}")
+    st.write(f"**Name:** {check_name}")
+    st.write(f"**Created At:** {created_at}")
+    st.write(f"**Status Message:** {status_message}")
+    st.write(f"**Lines of Code:** {lines_of_code}")
+    st.write(f"**Similar Files:** {similar_files}")
+    st.write(f"**Matches Found:** {matches_found}")
+    st.write(f"**Filename:** {filename}")
+    st.write(f"**Probability of Plagiarism:** {probability_of_plagiarism}%")
+    st.write(f"**Uniqueness Percentage:** {uniqueness_percentage}%")
+    st.write(f"**Matches Local Database:** {matches_local_db}")
+    st.write(f"**Matches Web:** {matches_web}")
+
+# Streamlit app
+def main():
+    st.title("Codequiry Plagiarism Check")
+
+    # API key input
+    api_key = st.text_input("Enter your Codequiry API key:", type="password")
+    
+    if not api_key:
+        st.warning("Please enter your Codequiry API key to proceed.")
+        return
+
+    # File upload
+    uploaded_file = st.file_uploader("Upload a file for plagiarism check", type=["py", "cs", "java", "txt"])
+
+    if uploaded_file is not None:
+        with open(uploaded_file.name, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        original_file_path = uploaded_file.name
+        zip_file_path = original_file_path.replace('.', '_') + '.zip'
+        compress_file_to_zip(original_file_path, zip_file_path)
+        
+        check_name = st.text_input("Enter a name for the check:", value="Test Check")
+        lang_id = st.selectbox("Select the programming language:", [18, 19, 20])  # Example: 18 for C#, 19 for Java, 20 for Python
+        
+        if st.button("Start Check"):
+            check_response = create_check(api_key, check_name, lang_id)
+            st.write(f"Check Creation Response: {check_response}")
+            check_id = check_response['id']
+            
+            upload_response = upload_file(api_key, check_id, zip_file_path)
+            st.write(f"File Upload Response: {upload_response}")
+            
+            start_response = start_check(api_key, check_id, dbcheck=False, webcheck=True)
+            st.write(f"Start Check Response: {start_response}")
+            
+            overview_response = wait_for_check_completion(api_key, check_id)
+            st.write(f"Check Overview Response: {overview_response}")
+            
+            if overview_response:
+                submission_id = overview_response['submissions'][0]['id']
+                detailed_results = get_detailed_submission_results(api_key, check_id, submission_id)
+                st.write(f"Detailed Submission Results: {detailed_results}")
+                parse_and_display_results(detailed_results)
+            else:
+                st.error("Failed to retrieve check results.")
 
 if __name__ == "__main__":
-    print_lines()
+    main()
