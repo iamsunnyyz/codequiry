@@ -5,8 +5,7 @@ on:
     branches:
       - master
     paths:
-      - '**/*.zip'  # Trigger on zip file changes
-      - '**/*.py'   # Trigger on Python file changes
+      -'**/*.cs'
 
 jobs:
   codequiry-check:
@@ -24,8 +23,13 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-      - name: Run Codequiry Check
+          
+            - name: Run Codequiry Check with Streamlit
+      
+      - name: Run Codequiry Check with Streamlit
         env:
           CODEQUIRY_API_KEY: ${{ secrets.CODEQUIRY_API_KEY }}
         run: |
-          python script.py
+          streamlit run app.py
+
+         
