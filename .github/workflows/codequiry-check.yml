@@ -24,14 +24,12 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install streamlit
-          sudo apt-get install -y npm
-          sudo npm install -g localtunnel
+          sudo apt-get install -y ssh
 
       - name: Run Streamlit app
         run: |
           streamlit run check.py &
 
-      - name: Expose Streamlit with Localtunnel
+      - name: Expose Streamlit with Serveo
         run: |
-          lt --port 8501 --subdomain yoursubdomain
+          ssh -R 80:localhost:8501 serveo.net
