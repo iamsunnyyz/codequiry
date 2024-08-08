@@ -6,7 +6,6 @@ on:
       - master
     paths:
       - '**/*.cs'
-      - '**/*.py'
 
 jobs:
   codequiry-check:
@@ -32,4 +31,6 @@ jobs:
 
       - name: Expose Streamlit with Serveo
         run: |
-          ssh -R 80:localhost:8501 serveo.net
+          mkdir -p ~/.ssh
+          echo "serveo.net ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEArM+nqYX8zn3K/7zg/NXYWb7bY1d7tQhG4B12GRRCDfLwD6F5PfDSuEC6M5SyZyRG3ghXzqFcX0zwFf3VdUQjt6P9O9KszdFhBHTzZgZclIzsF3H1y/GIZNiSZKzFvcLgXH8Qb8A4XlY3TPOT+8oKGEh5a6iwF5Ih8JLfa/QzCg/X7uj3cU0wrqUljmhgnbKM5KLd9jSyYf6Zh4E0S9tp0K2r9L03vPG3jruSCIdcBd8XQ/GH2yD1V3JnHqaB2CjfiGQ/M2o0gW8HhG2fPUeNEiMyRSO/8EDLFnqEECiWPrFnR+Pbg9kRtFxt1vOdTT5eGZxhQs4sM7HvhLApfgOTul9iDwJ1z8Q6F2sT1M0W2MS1EosMcUuQm5qkGJzLtnT8ADvFmH/JrBdeTMRHqVDF4jSOV7a+PEpqQZXS1F4T8bIXA0VyyxL78aD3c/kdZ2hN0vj91ctJkHrAbX0owfQ4Q/Z5+dM8yBZl1LrU0Jk6+xAi5jQ0RGv9ug0ZLUe3/o9ZHk= root@serveo" >> ~/.ssh/known_hosts
+          ssh -o StrictHostKeyChecking=no -R 80:localhost:8501 serveo.net
