@@ -40,7 +40,7 @@ def print_lines():
         '''
     ]
     
-    interval = 120 / len(lines) 
+    interval = 120 / len(lines)   #new updated
     
     placeholder = st.empty()
     
