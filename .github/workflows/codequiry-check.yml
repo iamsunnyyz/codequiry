@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      -'**/*.cs'
+      - '**/*.cs'
 
 jobs:
   codequiry-check:
@@ -23,11 +23,14 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-      
+
       - name: Run Codequiry Check with Streamlit
         env:
           CODEQUIRY_API_KEY: ${{ secrets.CODEQUIRY_API_KEY }}
         run: |
+          latest_file=$(find . -name '*.cs' -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
+          
+          zip_file="code-check.zip"
+          zip -r $zip_file $latest_file
+          
           streamlit run script.py
-
-         

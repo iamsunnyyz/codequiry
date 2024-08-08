@@ -2,20 +2,26 @@ import os
 import requests
 import time
 import json
+import zipfile
 import streamlit as st
 from codequiry import Codequiry
+
+def get_latest_cs_file(directory):
+    files = [os.path.join(directory, f) for f in os.listdir(directory) if f.endswith('.cs')]
+    latest_file = max(files, key=os.path.getctime)
+    return latest_file
+
+def compress_file(file_path):
+    zip_filename = file_path + '.zip'
+    with zipfile.ZipFile(zip_filename, 'w') as zipf:
+        zipf.write(file_path, os.path.basename(file_path))
+    return zip_filename
 
 def get_account_info(api_key):
     codequiry = Codequiry(api_key)
     account_info = codequiry.account()
     st.write("Account Information:", account_info)
     return account_info
-
-# def get_check_history(api_key):
-#     codequiry = Codequiry(api_key)
-#     check_history = codequiry.checks()
-#     st.write("Check History:", check_history)
-#     return check_history
 
 def create_check(api_key, check_name, lang_id):
     codequiry = Codequiry(api_key)
@@ -191,9 +197,6 @@ def main():
     st.subheader("Account Information")
     get_account_info(API_KEY)
     
-    # st.subheader("Check History")
-    # get_check_history(API_KEY)
-    
     check_name = "Test Check"
     lang_id = 18  # Example: C# language ID
     
@@ -202,8 +205,9 @@ def main():
     check_id = check_response['id']
     
     st.subheader("Upload File")
-    file_path = 'code-check.zip'  # Update this path to your zip file location
-    upload_file(API_KEY, check_id, file_path)
+    latest_cs_file = get_latest_cs_file('.')
+    zip_file_path = compress_file(latest_cs_file)
+    upload_file(API_KEY, check_id, zip_file_path)
     
     st.subheader("Start Check")
     start_check(API_KEY, check_id, dbcheck=False, webcheck=True)
