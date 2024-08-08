@@ -23,13 +23,11 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          
-            - name: Run Codequiry Check with Streamlit
       
       - name: Run Codequiry Check with Streamlit
         env:
           CODEQUIRY_API_KEY: ${{ secrets.CODEQUIRY_API_KEY }}
         run: |
-          streamlit run app.py
+          streamlit run script.py
 
          
