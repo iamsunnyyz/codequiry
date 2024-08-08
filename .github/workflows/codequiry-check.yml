@@ -5,6 +5,7 @@ on:
     branches:
       - master
     paths:
+      - '**/*.py'
       - '**/*.cs'
 
 jobs:
@@ -28,9 +29,4 @@ jobs:
         env:
           CODEQUIRY_API_KEY: ${{ secrets.CODEQUIRY_API_KEY }}
         run: |
-          latest_file=$(find . -name '*.cs' -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
-          
-          zip_file="code-check.zip"
-          zip -r $zip_file $latest_file
-          
-          streamlit run script.py
+          streamlit run check.py
