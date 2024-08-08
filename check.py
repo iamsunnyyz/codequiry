@@ -35,12 +35,12 @@ def print_lines():
         Uniqueness Percentage: 20%
 
         Matches Local Database: 0
-        
+
         Matches Web: 3
         '''
     ]
     
-    interval = 120 / len(lines)
+    interval = 120 / len(lines) #two minutes
     
     placeholder = st.empty()
     

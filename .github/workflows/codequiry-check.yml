@@ -5,7 +5,6 @@ on:
     branches:
       - master
     paths:
-      - '**/*.py'
       - '**/*.cs'
 
 jobs:
@@ -24,9 +23,14 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+          pip install streamlit
+          sudo apt-get install -y npm
+          sudo npm install -g localtunnel
 
-      - name: Run Codequiry Check with Streamlit
-        env:
-          CODEQUIRY_API_KEY: ${{ secrets.CODEQUIRY_API_KEY }}
+      - name: Run Streamlit app
         run: |
-          streamlit run check.py
+          streamlit run check.py &
+
+      - name: Expose Streamlit with Localtunnel
+        run: |
+          lt --port 8501 --subdomain yoursubdomain
