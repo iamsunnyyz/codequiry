@@ -9,12 +9,14 @@ from codequiry import Codequiry
 def get_latest_cs_file(directory):
     files = [os.path.join(directory, f) for f in os.listdir(directory) if f.endswith('.cs')]
     latest_file = max(files, key=os.path.getctime)
+    st.write("latest_file:", latest_file)
     return latest_file
 
 def compress_file(file_path):
     zip_filename = file_path + '.zip'
     with zipfile.ZipFile(zip_filename, 'w') as zipf:
         zipf.write(file_path, os.path.basename(file_path))
+    st.write("zip_filename:", zip_filename)
     return zip_filename
 
 def get_account_info(api_key):
