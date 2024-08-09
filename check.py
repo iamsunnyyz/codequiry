@@ -40,7 +40,7 @@ def print_lines():
         '''
     ]
     
-    interval = 120 / len(lines)   #comment
+    interval = 120 / len(lines)  
     
     placeholder = st.empty()
     

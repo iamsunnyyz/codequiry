@@ -9,26 +9,26 @@ from codequiry import Codequiry
 def get_latest_cs_file(directory):
     files = [os.path.join(directory, f) for f in os.listdir(directory) if f.endswith('.cs')]
     latest_file = max(files, key=os.path.getctime)
-    st.write("latest_file:", latest_file)
+    st.write("Latest file selected:", latest_file)
     return latest_file
 
 def compress_file(file_path):
     zip_filename = file_path + '.zip'
     with zipfile.ZipFile(zip_filename, 'w') as zipf:
         zipf.write(file_path, os.path.basename(file_path))
-    st.write("zip_filename:", zip_filename)
+    st.write("Compressed file:", zip_filename)
     return zip_filename
 
 def get_account_info(api_key):
     codequiry = Codequiry(api_key)
     account_info = codequiry.account()
-    st.write("Account Information:", account_info)
+    st.write("Account Information retrieved.")
     return account_info
 
 def create_check(api_key, check_name, lang_id):
     codequiry = Codequiry(api_key)
     response = codequiry.create_check(check_name, lang_id)
-    st.write("Check Creation Response:", response)
+    st.write("Check created successfully.")
     return response
 
 def upload_file(api_key, check_id, file_path):
@@ -44,14 +44,13 @@ def upload_file(api_key, check_id, file_path):
     }
     try:
         response = requests.post(url, headers=headers, files=files, data=data)
-        st.write("Raw Upload Response:", response.text)
         response_json = response.json()
-        st.write("Upload Response JSON:", response_json)
+        st.write("File uploaded successfully.")
         return response_json
     except requests.exceptions.RequestException as e:
-        st.write("Request Exception:", e)
+        st.error(f"File upload failed: {e}")
     except ValueError as e:
-        st.write("JSON Decode Error:", e)
+        st.error(f"Error decoding response: {e}")
 
 def start_check(api_key, check_id, dbcheck=False, webcheck=False):
     url = 'https://codequiry.com/api/v1/check/start'
@@ -67,14 +66,13 @@ def start_check(api_key, check_id, dbcheck=False, webcheck=False):
         params['webcheck'] = 1
     try:
         response = requests.post(url, headers=headers, params=params)
-        st.write("Raw Start Check Response:", response.text)
         response_json = response.json()
-        st.write("Start Check Response JSON:", response_json)
+        st.write("Check started successfully.")
         return response_json
     except requests.exceptions.RequestException as e:
-        st.write("Request Exception:", e)
+        st.error(f"Check start failed: {e}")
     except ValueError as e:
-        st.write("JSON Decode Error:", e)
+        st.error(f"Error decoding response: {e}")
 
 def get_check_status(api_key, check_id):
     url = 'https://codequiry.com/api/v1/check/get'
@@ -86,14 +84,12 @@ def get_check_status(api_key, check_id):
     }
     try:
         response = requests.post(url, headers=headers, params=params)
-        st.write("Raw Check Status Response:", response.text)
         response_json = response.json()
-        st.write("Check Status Response JSON:", response_json)
         return response_json
     except requests.exceptions.RequestException as e:
-        st.write("Request Exception:", e)
+        st.error(f"Failed to retrieve check status: {e}")
     except ValueError as e:
-        st.write("JSON Decode Error:", e)
+        st.error(f"Error decoding response: {e}")
 
 def get_check_overview(api_key, check_id):
     url = 'https://codequiry.com/api/v1/check/overview'
@@ -105,14 +101,12 @@ def get_check_overview(api_key, check_id):
     }
     try:
         response = requests.post(url, headers=headers, params=params)
-        st.write("Raw Check Overview Response:", response.text)
         response_json = response.json()
-        st.write("Check Overview Response JSON:", response_json)
         return response_json
     except requests.exceptions.RequestException as e:
-        st.write("Request Exception:", e)
+        st.error(f"Failed to retrieve check overview: {e}")
     except ValueError as e:
-        st.write("JSON Decode Error:", e)
+        st.error(f"Error decoding response: {e}")
 
 def get_detailed_submission_results(api_key, check_id, submission_id):
     url = 'https://codequiry.com/api/v1/check/results'
@@ -125,41 +119,40 @@ def get_detailed_submission_results(api_key, check_id, submission_id):
     }
     try:
         response = requests.post(url, headers=headers, params=params)
-        st.write("Raw Detailed Submission Results Response:", response.text)
         response_json = response.json()
-        st.write("Detailed Submission Results Response JSON:", response_json)
         return response_json
     except requests.exceptions.RequestException as e:
-        st.write("Request Exception:", e)
+        st.error(f"Failed to retrieve detailed results: {e}")
     except ValueError as e:
-        st.write("JSON Decode Error:", e)
+        st.error(f"Error decoding response: {e}")
 
 def wait_for_check_completion(api_key, check_id, interval=60, max_attempts=10):
     attempts = 0
+    status_message = st.empty()
     while attempts < max_attempts:
         status_response = get_check_status(api_key, check_id)
         status = status_response.get('status')
         
         if status == 4:  # Assuming status 4 means results available
-            st.write("Check completed. Fetching results...") 
+            status_message.text("Check completed. Fetching results...") 
             return get_check_overview(api_key, check_id)
         elif status in [1, 2, 3, 7]:  # Pending, Ready, Errors, In Queue
-            st.write("Check status:", status)
+            status_message.text(f"Check status: {status}")
         else:
-            st.write("Unknown status:", status)
+            status_message.text(f"Unknown status: {status}")
         
         attempts += 1
         time.sleep(interval)
     
-    st.write("Check did not complete within the expected time.")
+    status_message.text("Check did not complete within the expected time.")
     return None
 
-def parse_and_display_results(raw_response):
+def parse_and_display_results(response_json):
     try:
-        response_json = json.loads(raw_response)
         check = response_json.get('check', {})
         submissions = response_json.get('submissions', [{}])[0]
 
+        # Extract relevant information
         check_id = check.get('id')
         check_name = check.get('name')
         created_at = check.get('created_at')
@@ -186,10 +179,8 @@ def parse_and_display_results(raw_response):
         st.write(f"Matches Local Database: {matches_local_db}")
         st.write(f"Matches Web: {matches_web}")
 
-    except json.JSONDecodeError as e:
-        st.write(f"JSON Decode Error: {e}")
     except Exception as e:
-        st.write(f"Error: {e}")
+        st.error(f"Error parsing and displaying results: {e}")
 
 def main():
     st.title("Codequiry Plagiarism Check")
@@ -217,11 +208,11 @@ def main():
     st.subheader("Wait for Check Completion")
     overview_response = wait_for_check_completion(API_KEY, check_id)
     if overview_response:
-        st.write("Check Overview:", overview_response)
+        st.write("Check Overview retrieved.")
         
         submission_id = overview_response['submissions'][0]['id']
         detailed_results = get_detailed_submission_results(API_KEY, check_id, submission_id)
-        st.write("Detailed Submission Results:", detailed_results)
+        st.write("Detailed Submission Results retrieved.")
         
         parse_and_display_results(detailed_results)
     else:
