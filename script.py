@@ -138,16 +138,24 @@ def wait_for_check_completion(api_key, check_id, interval=60, max_attempts=10):
     attempts = 0
     while attempts < max_attempts:
         status_response = get_check_status(api_key, check_id)
-        status = status_response.get('status')
-        
-        if status == 4:  # Assuming status 4 means results available
+        status_id = status_response.get('status_id')
+
+        if status_id == 4:  # Status 4 indicates that the check is complete
             st.write("Check completed. Fetching results...") 
-            return get_check_overview(api_key, check_id)
-        elif status in [1, 2, 3, 7]:  # Pending, Ready, Errors, In Queue
-            st.write("Check status:", status)
+            overview_response = get_check_overview(api_key, check_id)
+            if overview_response:
+                st.write("Check Overview:", overview_response)
+                submission_id = overview_response['submissions'][0]['id']
+                detailed_results = get_detailed_submission_results(api_key, check_id, submission_id)
+                st.write("Detailed Submission Results:", detailed_results)
+                parse_and_display_results(detailed_results)  # Trigger parsing and display of results
+            return overview_response
+
+        elif status_id in [1, 2, 3, 7]:  # Pending, Ready, Errors, In Queue
+            st.write("Check status:", status_id)
         else:
-            st.write("Unknown status:", status)
-        
+            st.write("Unknown status:", status_id)
+
         attempts += 1
         time.sleep(interval)
     

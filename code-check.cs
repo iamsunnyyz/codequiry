@@ -26,8 +26,7 @@ class GfG {
 
         // Merge the temp arrays
 
-        // Initial indexes of first
-        // and second subarrays
+        // Initial indexes of first and second subarrays
         i = 0;
         j = 0;
 
