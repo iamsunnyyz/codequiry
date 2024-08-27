@@ -173,6 +173,9 @@ def parse_and_display_results(raw_response):
         matches_local_db = submissions.get('matches_local')
         matches_web = submissions.get('matches_web')
 
+         # Calculate the Probability of Uniqueness
+        probability_of_uniqueness = 100 - probability_of_plagiarism
+
         # Display the parsed results
         st.write(f"Check ID: {check_id}")
         st.write(f"Name: {check_name}")
@@ -183,6 +186,7 @@ def parse_and_display_results(raw_response):
         st.write(f"Matches Found: {matches_found}")
         st.write(f"Filename: {filename}")
         st.write(f"Probability of Plagiarism: {probability_of_plagiarism}%")
+        st.write(f"Probability of Uniqueness: {probability_of_uniqueness}%")
         st.write(f"Matches Local Database: {matches_local_db}")
         st.write(f"Matches Web: {matches_web}")
 
@@ -193,6 +197,7 @@ def parse_and_display_results(raw_response):
 
 def main():
     st.title("Codequiry Plagiarism Check")
+
 
     API_KEY = os.getenv("CODEQUIRY_API_KEY")
     
