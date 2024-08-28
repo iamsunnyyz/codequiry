@@ -68,15 +68,15 @@ def parse_and_display_results(response_json):
     check_id = check.get('id')
     check_name = check.get('name')
     created_at = check.get('created_at')
-    status = check.get('status')
+    status = response_json.get('status')  # Correctly fetching status
     status_message = check.get('status_message')
     lines_of_code = check.get('lines')
     similar_files = check.get('similar_files')
-    matches_found = check.get('matches_found')
+    matches_found = check.get('matches_found')  # Correctly fetching matches_found
 
     filename = submissions.get('filename')
-    matches_local_db = submissions.get('matches_local', 0)
-    matches_web = submissions.get('matches_web', 0)
+    matches_local_db = submissions.get('matches_local', 0)  # Correctly fetching matches_local
+    matches_web = submissions.get('matches_web', 0)  # Correctly fetching matches_web
 
     # Calculate the Probability of Plagiarism
     probability_of_plagiarism = calculate_probability_of_plagiarism(
@@ -97,6 +97,7 @@ def parse_and_display_results(response_json):
     st.write(f"**Probability of Uniqueness:** **{probability_of_uniqueness}%**")
     st.write(f"**Matches Local Database:** {matches_local_db}")
     st.write(f"**Matches Web:** {matches_web}")
+
 
 def main():
     st.title("Codequiry Plagiarism Check")
